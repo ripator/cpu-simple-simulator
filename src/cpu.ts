@@ -76,7 +76,7 @@
    private checkErrors = (argument1: string, argument2: string) => {
       if (this.isInvalidString(argument1) 
          || this.isInvalidString(argument2)) {
-         throw `'Error[line: ${this.linePointer}]: The arguments should be a number or a register name.'`
+         throw `Error[line: ${this.linePointer}]: The arguments should be a number or a register name.`
       }
    }
 
@@ -118,7 +118,7 @@
 
   public mov(argument1: string, argument2: string) {
    if (this.isInvalidString(argument2)) {
-      throw 'Error[mov]: The second argument should be a number or a register name.'
+      throw `Error[line: ${this.linePointer}]: The second argument should be a number or a register name.`
    }
    if (this.isValidRegisterName(argument2)) {
       this[argument1] = this[argument2]
