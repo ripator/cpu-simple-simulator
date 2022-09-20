@@ -80,6 +80,34 @@
       }
    }
 
+   private calculateAdd = (argument1: number, argument2: number) => {
+      return argument1 + argument2;
+   }
+
+   private calculateSub = (argument1: number, argument2: number) => {
+      return argument1 - argument2;
+   }
+
+   private calculateMul = (argument1: number, argument2: number) => {
+      return argument1 * argument2;
+   }
+
+   private calculateDiv = (argument1: number, argument2: number) => {
+      return argument1 / argument2;
+   }
+
+   private calculateAnd = (argument1: number, argument2: number) => {
+      return argument1 & argument2;
+   }
+
+   private calculateOr = (argument1: number, argument2: number) => {
+      return argument1 | argument2;
+   }
+
+   private calculateXor = (argument1: number, argument2: number) => {
+      return argument1 ^ argument2;
+   }
+
   public print (argument: string) {
    if (this.isValidRegisterName(argument)) {
       console.log(this[argument]);
@@ -100,86 +128,42 @@
    }
   }
 
+  private handleArithmeticLogic = (argument1: string, argument2: string, callback: (a1, a2) => number) => {
+      if (this.isValidRegisterName(argument1)) {
+         if (this.isNumericValue(argument2)) {
+            this[argument1] = callback(Number(this[argument1]), Number(argument2));
+         }
+         if (this.isValidRegisterName(argument2)) {
+            this[argument1] = callback(Number(this[argument1]), Number(argument2));
+         }
+      }
+      if (this.isNumericValue(argument1)) {
+         if (this.isNumericValue(argument2)) {
+            this.reg0 = callback(Number(this[argument1]), Number(argument2));
+         }
+         if (this.isValidRegisterName(argument2)) {
+            this.reg0 = callback(Number(this[argument1]), Number(argument2));
+         }
+      }
+      this.checkErrors(argument1, argument2);
+   }
+
   //arithmetic methods below
 
   public add(argument1: string, argument2: string) {
-      if (this.isValidRegisterName(argument1)) {
-         if (this.isNumericValue(argument2)) {
-            this[argument1] = Number(this[argument1]) + Number(argument2);
-         }
-         if (this.isValidRegisterName(argument2)) {
-            this[argument1] = Number(this[argument1]) + Number(this[argument2]);
-         }
-      }
-      if (this.isNumericValue(argument1)) {
-         if (this.isNumericValue(argument2)) {
-            this.reg0 = Number(argument1) + Number(argument2);
-         }
-         if (this.isValidRegisterName(argument2)) {
-            this.reg0 = Number(argument1) + Number(this[argument2]);
-         }
-      }
-      this.checkErrors(argument1, argument2);
+      this.handleArithmeticLogic(argument1, argument2, this.calculateAdd);
    }
 
    public sub(argument1: string, argument2: string) {
-      if (this.isValidRegisterName(argument1)) {
-         if (this.isNumericValue(argument2)) {
-            this[argument1] = Number(this[argument1]) - Number(argument2);
-         }
-         if (this.isValidRegisterName(argument2)) {
-            this[argument1] = Number(this[argument1]) - Number(this[argument2]);
-         }
-      }
-      if (this.isNumericValue(argument1)) {
-         if (this.isNumericValue(argument2)) {
-            this.reg0 = Number(argument1) - Number(argument2);
-         }
-         if (this.isValidRegisterName(argument2)) {
-            this.reg0 = Number(argument1) - Number(this[argument2]);
-         }
-      }
-      this.checkErrors(argument1, argument2);
+      this.handleArithmeticLogic(argument1, argument2, this.calculateSub);
    }
 
    public mul(argument1: string, argument2: string) {
-      if (this.isValidRegisterName(argument1)) {
-         if (this.isNumericValue(argument2)) {
-            this[argument1] = Number(this[argument1]) * Number(argument2);
-         }
-         if (this.isValidRegisterName(argument2)) {
-            this[argument1] = Number(this[argument1]) * Number(this[argument2]);
-         }
-      }
-      if (this.isNumericValue(argument1)) {
-         if (this.isNumericValue(argument2)) {
-            this.reg0 = Number(argument1) * Number(argument2);
-         }
-         if (this.isValidRegisterName(argument2)) {
-            this.reg0 = Number(argument1) * Number(this[argument2]);
-         }
-      }
-      this.checkErrors(argument1, argument2);
+      this.handleArithmeticLogic(argument1, argument2, this.calculateMul);
    }
 
    public div(argument1: string, argument2: string) {
-      if (this.isValidRegisterName(argument1)) {
-         if (this.isNumericValue(argument2)) {
-            this[argument1] = Number(this[argument1]) / Number(argument2);
-         }
-         if (this.isValidRegisterName(argument2)) {
-            this[argument1] = Number(this[argument1]) / Number(this[argument2]);
-         }
-      }
-      if (this.isNumericValue(argument1)) {
-         if (this.isNumericValue(argument2)) {
-            this.reg0 = Number(argument1) / Number(argument2);
-         }
-         if (this.isValidRegisterName(argument2)) {
-            this.reg0 = Number(argument1) / Number(this[argument2]);
-         }
-      }
-      this.checkErrors(argument1, argument2);
+      this.handleArithmeticLogic(argument1, argument2, this.calculateDiv);
    }
 
    private compareOperation(argument1: string, argument2: string) {
@@ -206,35 +190,35 @@
       this.checkErrors(argument1, argument2);
    }
 
-   public jmp(label) {
+   public jmp(label: string) {
       this.linePointer = this.labels[label];
    }
 
-   public jl(label) {
-      if (this.reg9 === -1) {
+   public jl(label: string) {
+      if (this.reg9 < 0) {
          this.jmp(label);
       }
    }
 
-   public jg(label) {
-      if (this.reg9 === 1) {
+   public jg(label: string) {
+      if (this.reg9 > 0) {
          this.jmp(label);
       }
    }
 
-   public jle(label) {
+   public jle(label: string) {
       if (this.reg9 <= 0) {
          this.jmp(label);
       }
    }
 
-   public jge(label) {
+   public jge(label: string) {
       if (this.reg9 >= 0) {
          this.jmp(label);
       }
    }
 
-   public je(label) {
+   public je(label: string) {
       if (this.reg9 == 0) {
          this.jmp(label);
       }
@@ -243,63 +227,15 @@
    //logic methods below
 
    public and(argument1: string, argument2: string) {
-      if (this.isValidRegisterName(argument1)) {
-         if (this.isNumericValue(argument2)) {
-            this[argument1] = Number(this[argument1]) & Number(argument2);
-         }
-         if (this.isValidRegisterName(argument2)) {
-            this[argument1] = Number(this[argument1]) & Number(this[argument2]);
-         }
-      }
-      if (this.isNumericValue(argument1)) {
-         if (this.isNumericValue(argument2)) {
-            this.reg0 = Number(argument1) & Number(argument2);
-         }
-         if (this.isValidRegisterName(argument2)) {
-            this.reg0 = Number(argument1) & Number(this[argument2]);
-         }
-      }
-      this.checkErrors(argument1, argument2);
+      this.handleArithmeticLogic(argument1, argument2, this.calculateAnd);
    }
 
    public or(argument1: string, argument2: string) {
-      if (this.isValidRegisterName(argument1)) {
-         if (this.isNumericValue(argument2)) {
-            this[argument1] = Number(this[argument1]) | Number(argument2);
-         }
-         if (this.isValidRegisterName(argument2)) {
-            this[argument1] = Number(this[argument1]) | Number(this[argument2]);
-         }
-      }
-      if (this.isNumericValue(argument1)) {
-         if (this.isNumericValue(argument2)) {
-            this.reg0 = Number(argument1) | Number(argument2);
-         }
-         if (this.isValidRegisterName(argument2)) {
-            this.reg0 = Number(argument1) | Number(this[argument2]);
-         }
-      }
-      this.checkErrors(argument1, argument2);
+      this.handleArithmeticLogic(argument1, argument2, this.calculateOr);
    }
 
    public xor(argument1: string, argument2: string) {
-      if (this.isValidRegisterName(argument1)) {
-         if (this.isNumericValue(argument2)) {
-            this[argument1] = Number(this[argument1]) ^ Number(argument2);
-         }
-         if (this.isValidRegisterName(argument2)) {
-            this[argument1] = Number(this[argument1]) ^ Number(this[argument2]);
-         }
-      }
-      if (this.isNumericValue(argument1)) {
-         if (this.isNumericValue(argument2)) {
-            this.reg0 = Number(argument1) ^ Number(argument2);
-         }
-         if (this.isValidRegisterName(argument2)) {
-            this.reg0 = Number(argument1) ^ Number(this[argument2]);
-         }
-      }
-      this.checkErrors(argument1, argument2);
+      this.handleArithmeticLogic(argument1, argument2, this.calculateXor);
    }
 }
 
